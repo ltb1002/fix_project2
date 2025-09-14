@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+
 import '../controllers/theory_controller.dart';
 import '../model/lesson_model.dart';
 
@@ -27,6 +28,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen>
   void initState() {
     super.initState();
     _initializePlayer();
+
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -34,11 +36,10 @@ class _LessonDetailScreenState extends State<LessonDetailScreen>
       upperBound: 1.05,
     )..repeat(reverse: true);
 
-    // Initialize completion status
     _isCompleted = theoryController.isCompleted(
-        theoryController.subject,
-        theoryController.grade,
-        widget.lesson.title
+      theoryController.subject,
+      theoryController.grade,
+      widget.lesson.title,
     );
   }
 
@@ -79,41 +80,11 @@ class _LessonDetailScreenState extends State<LessonDetailScreen>
           ),
         );
       case 'image':
-        print("Loading image: ${item.value}");
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              item.value,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
-                  height: 200,
-                  color: Colors.grey[300],
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                print("Failed to load image: ${item.value}");
-                print("Error: $error");
-                return Container(
-                  height: 200,
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(Icons.broken_image, size: 50),
-                  ),
-                );
-              },
-            ),
+            child: Image.network(item.value, fit: BoxFit.cover),
           ),
         );
       default:
@@ -121,43 +92,19 @@ class _LessonDetailScreenState extends State<LessonDetailScreen>
     }
   }
 
-  Widget _buildExercise(Exercise exercise) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              exercise.question,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...exercise.solutions.map(_buildContentItem).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _toggleCompletion() {
     theoryController.toggleComplete(
-        theoryController.subject,
-        theoryController.grade,
-        widget.lesson.title
+      theoryController.subject,
+      theoryController.grade,
+      widget.lesson.title,
     );
 
-    // Update local state after a short delay to avoid setState during build
     Future.delayed(const Duration(milliseconds: 100), () {
       setState(() {
         _isCompleted = theoryController.isCompleted(
-            theoryController.subject,
-            theoryController.grade,
-            widget.lesson.title
+          theoryController.subject,
+          theoryController.grade,
+          widget.lesson.title,
         );
       });
     });
@@ -192,12 +139,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen>
             ),
             const SizedBox(height: 20),
 
-            // Display all content items
-            ...widget.lesson.contents.map(_buildContentItem).toList(),
-
-            const SizedBox(height: 20),
-
-            // Video player
+            // ✅ Video hiển thị trước
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : AspectRatio(
@@ -208,24 +150,14 @@ class _LessonDetailScreenState extends State<LessonDetailScreen>
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
-            // Exercises section
-            if (widget.lesson.exercises.isNotEmpty) ...[
-              const Text(
-                "Bài tập",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ...widget.lesson.exercises.map(_buildExercise).toList(),
-            ],
+            // ✅ Nội dung sau video
+            ...widget.lesson.contents.map(_buildContentItem).toList(),
 
             const SizedBox(height: 24),
 
-            // Complete button
+            // Nút Hoàn thành
             ScaleTransition(
               scale: _animController,
               child: ElevatedButton.icon(
@@ -241,14 +173,16 @@ class _LessonDetailScreenState extends State<LessonDetailScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _isCompleted ? Colors.green : primaryGreen,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24, vertical: 14),
+                    horizontal: 24,
+                    vertical: 14,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
               ),
             ),
 
-            // Add some extra space at the bottom to prevent overflow
             const SizedBox(height: 40),
           ],
         ),

@@ -10,4 +10,6 @@ class AppRoutes {
   static const lessonDetail = '/lesson_detail';
   static const quizDetail = '/quiz_detail';
   static const quiz = '/quiz';
+  static const practiceExam = '/practice_exam';
+  static const practiceExamDetail = '/practice_exam_detail';
 }

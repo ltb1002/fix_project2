@@ -1,60 +1,59 @@
-// content_model.dart
 class ContentItem {
-  final String type;
-  final String value;
+  final int id;
+  final String type;       // "text" hoặc "image"
+  final String value;      // nội dung text hoặc link image
+  final int order;         // thứ tự hiển thị
 
-  ContentItem({required this.type, required this.value});
+  ContentItem({
+    required this.id,
+    required this.type,
+    required this.value,
+    required this.order,
+  });
 
   factory ContentItem.fromJson(Map<String, dynamic> json) {
     return ContentItem(
-      type: json['type'] ?? 'text',
-      value: json['value'] ?? '',
+      id: json['id'] ?? 0,
+      type: json['contentType'] ?? 'text',
+      value: json['contentValue'] ?? '',
+      order: json['contentOrder'] ?? 0,
     );
   }
 }
 
-// exercise_model.dart
-class Exercise {
-  final String question;
-  final List<ContentItem> solutions;
-
-  Exercise({required this.question, required this.solutions});
-
-  factory Exercise.fromJson(Map<String, dynamic> json) {
-    var solutionsList = json['solutions'] as List<dynamic>? ?? [];
-    return Exercise(
-      question: json['question'] ?? '',
-      solutions: solutionsList.map((item) => ContentItem.fromJson(item)).toList(),
-    );
-  }
-}
-
-// lesson_model.dart
 class Lesson {
   final int id;
   final String title;
   final String videoUrl;
   final List<ContentItem> contents;
-  final List<Exercise> exercises;
 
   Lesson({
     required this.id,
     required this.title,
     required this.videoUrl,
-    required this.contents,
-    required this.exercises,
+    this.contents = const [],
   });
 
-  factory Lesson.fromJson(Map<String, dynamic> json) {
-    var contentsList = json['contents'] as List<dynamic>? ?? [];
-    var exercisesList = json['exercises'] as List<dynamic>? ?? [];
+  Lesson copyWith({
+    int? id,
+    String? title,
+    String? videoUrl,
+    List<ContentItem>? contents,
+  }) {
+    return Lesson(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      videoUrl: videoUrl ?? this.videoUrl,
+      contents: contents ?? this.contents,
+    );
+  }
 
+  factory Lesson.fromJson(Map<String, dynamic> json) {
     return Lesson(
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
-      videoUrl: json['videoUrl'] ?? '',
-      contents: contentsList.map((item) => ContentItem.fromJson(item)).toList(),
-      exercises: exercisesList.map((item) => Exercise.fromJson(item)).toList(),
+      videoUrl: json['videoUrl'] ?? "",
+      contents: [], // sẽ được load từ API riêng
     );
   }
 }

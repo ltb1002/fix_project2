@@ -55,14 +55,12 @@ class TheoryRepository {
         Platform.environment.containsKey('GENYMOTION');
   }
 
-  /// Map tên môn học hiển thị (có dấu) sang code trong DB (không dấu, viết liền)
   String _normalizeSubjectCode(String subjectName) {
     final mapping = {
       "Toán": "toan",
       "Ngữ Văn": "nguvan",
       "Khoa học Tự nhiên": "khoahoctunhien",
       "Tiếng Anh": "tienganh",
-      // thêm các môn khác nếu có
     };
 
     return mapping[subjectName] ??
@@ -71,38 +69,49 @@ class TheoryRepository {
 
   Future<List<Chapter>> fetchTheory(String subjectName, int grade) async {
     try {
-      // 1. Chuyển tên môn học sang code trong DB
       final subjectCode = _normalizeSubjectCode(subjectName);
 
-      // 2. Gọi API lấy thông tin subject theo grade + code
-      final subjectRes = await _getWithRetry(
-          "$baseUrl/grades/$grade/subjects/$subjectCode");
+      final subjectRes =
+      await _getWithRetry("$baseUrl/grades/$grade/subjects/$subjectCode");
       final subject = json.decode(subjectRes);
 
-      // Check if subject data is valid
       if (subject == null || subject['id'] == null) {
         throw Exception("Không tìm thấy môn học: $subjectName - Khối $grade");
       }
 
       final subjectId = subject['id'];
 
-      // 3. Lấy chapters của subject
       final chaptersRes =
       await _getWithRetry("$baseUrl/subjects/$subjectId/chapters");
       final chaptersData = json.decode(chaptersRes) as List;
 
       List<Chapter> chapters = [];
 
-      // 4. Lấy lessons cho từng chapter
       for (var chapterJson in chaptersData) {
         final chapterId = chapterJson['id'];
         final lessonsRes =
         await _getWithRetry("$baseUrl/chapters/$chapterId/lessons");
         final lessonsData = json.decode(lessonsRes) as List;
 
+        List<Lesson> lessons = [];
+        for (var lessonJson in lessonsData) {
+          Lesson lesson = Lesson.fromJson(lessonJson);
+
+          // fetch contents và sort theo order
+          final contentsRes =
+          await _getWithRetry("$baseUrl/lessons/${lesson.id}/contents");
+          final contentsData = json.decode(contentsRes) as List;
+          final contents = contentsData
+              .map<ContentItem>((x) => ContentItem.fromJson(x))
+              .toList()
+            ..sort((a, b) => a.order.compareTo(b.order));
+
+          lesson = lesson.copyWith(contents: contents);
+          lessons.add(lesson);
+        }
+
         Chapter chapter = Chapter.fromJson(chapterJson);
-        chapter.lessons =
-            lessonsData.map<Lesson>((x) => Lesson.fromJson(x)).toList();
+        chapter.lessons = lessons;
         chapters.add(chapter);
       }
 

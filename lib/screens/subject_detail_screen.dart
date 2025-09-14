@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_elearning_application/screens/practice_exam_screen.dart';
 import 'package:get/get.dart';
 import '../app/routes/app_routes.dart';
+import '../controllers/practice_exam_controller.dart';
 import '../controllers/theory_controller.dart';
 import '../controllers/quiz_controller.dart';
 
@@ -66,7 +68,18 @@ class SubjectDetailScreen extends StatelessWidget {
         "icon": Icons.article_rounded,
         "color": Colors.purple,
         "onTap": () {
-          // TODO: Mở bộ đề thi sau
+          final tag = '${subject}_$grade';
+          Get.create<PracticeExamController>(() => PracticeExamController(), tag: tag);
+          final controller = Get.find<PracticeExamController>(tag: tag);
+
+          Get.to(
+                () => PracticeExamScreen(
+              subject: subject,
+              grade: grade.toString(),
+              controller: controller,
+            ),
+            transition: Transition.rightToLeft,
+          );
         }
       },
     ];
