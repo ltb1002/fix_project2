@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_elearning_application/app/routes/app_routes.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../app/routes/app_routes.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
+
+  /// Hàm điều hướng sang màn hình Login hoặc Signup và lưu trạng thái isFirstOpen
+  Future<void> _navigateAndSetFirstOpen(String routeName) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isFirstOpen', false); // đánh dấu đã mở lần đầu
+    Get.offNamed(routeName); // Sử dụng Get.offNamed để không quay lại WelcomeScreen
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +42,10 @@ class WelcomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // --- Nút Sign up
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.login);
-                      },
+                      onPressed: () => _navigateAndSetFirstOpen(AppRoutes.login),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -56,12 +60,9 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 15),
-                  // --- Nút Log in
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.signup); // Thêm route login
-                      },
+                      onPressed: () => _navigateAndSetFirstOpen(AppRoutes.signup),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         side: const BorderSide(color: Colors.green),

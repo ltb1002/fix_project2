@@ -6,6 +6,8 @@ class LoginScreen extends StatelessWidget {
   final GlobalKey<FormState> _formkeyLogin = GlobalKey<FormState>();
   final AuthController authController = Get.find<AuthController>();
 
+  LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,8 +37,7 @@ class LoginScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Tiêu đề
-                      Column(
+                      const Column(
                         children: [
                           Text(
                             "Đăng Nhập",
@@ -47,17 +48,15 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 30),
-
-                      // Ô nhập Email
+                      const SizedBox(height: 30),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: TextFormField(
                           controller: authController.emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: "Email",
-                            prefixIcon: Icon(Icons.email),
+                            prefixIcon: const Icon(Icons.email),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -67,17 +66,15 @@ class LoginScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                      SizedBox(height: 20),
-
-                      // Ô nhập Password
+                      const SizedBox(height: 20),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: Obx(() => TextFormField(
                           controller: authController.passwordController,
                           obscureText: authController.isPasswordVisible.value,
                           decoration: InputDecoration(
                             labelText: "Password",
-                            prefixIcon: Icon(Icons.lock),
+                            prefixIcon: const Icon(Icons.lock),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -98,11 +95,9 @@ class LoginScreen extends StatelessWidget {
                           },
                         )),
                       ),
-                      SizedBox(height: 10),
-
-                      // Nút Quên mật khẩu
+                      const SizedBox(height: 10),
                       Padding(
-                        padding: EdgeInsets.only(right: 40),
+                        padding: const EdgeInsets.only(right: 40),
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
@@ -118,13 +113,11 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 30),
-
-                      // Nút Đăng nhập
+                      const SizedBox(height: 30),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: Container(
-                          padding: EdgeInsets.only(top: 3, left: 3),
+                          padding: const EdgeInsets.only(top: 3, left: 3),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
                             border: Border.all(color: Colors.black),
@@ -140,7 +133,7 @@ class LoginScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50),
                             ),
-                            child: Text(
+                            child: const Text(
                               "Đăng nhập",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
@@ -151,21 +144,19 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-
-                      // Điều hướng sang trang Đăng ký
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Bạn chưa có tài khoản "),
+                          const Text("Bạn chưa có tài khoản "),
                           GestureDetector(
                             onTap: () {
                               authController.usernameController.clear();
                               authController.emailController.clear();
                               authController.passwordController.clear();
-                              Get.back();
+                              Get.toNamed('/signup');
                             },
-                            child: Text(
+                            child: const Text(
                               "Đăng Ký",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
@@ -176,12 +167,10 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 30),
-
-                      // Ảnh minh họa
+                      const SizedBox(height: 30),
                       Container(
                         height: 200,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage("assets/img_4.png"),
                             fit: BoxFit.fitHeight,

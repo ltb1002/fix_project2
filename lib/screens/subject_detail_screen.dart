@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../app/routes/app_routes.dart';
+import '../controllers/theory_controller.dart';
+import '../controllers/quiz_controller.dart';
 
 class SubjectDetailScreen extends StatelessWidget {
   final Color primaryGreen = const Color(0xFF4CAF50);
   final int grade;
   final String subject;
+  final TheoryController controller = Get.put(TheoryController());
+  final QuizController quizController = Get.put(QuizController());
 
   SubjectDetailScreen({
     super.key,
-    required this.grade,
-    required this.subject,
-  });
+    int? grade,
+    String? subject,
+  })  : grade = grade ?? (Get.arguments?['grade'] ?? 6),
+        subject = subject ?? (Get.arguments?['subject'] ?? 'Toán');
 
   @override
   Widget build(BuildContext context) {
     // Load dữ liệu lý thuyết cho môn + khối
+    controller.loadTheory(subject, grade);
 
     final List<Map<String, dynamic>> featureCards = [
       {
@@ -22,6 +29,13 @@ class SubjectDetailScreen extends StatelessWidget {
         "icon": Icons.menu_book_rounded,
         "color": Colors.blue,
         "onTap": () {
+          Get.toNamed(
+            AppRoutes.theory,
+            arguments: {
+              'subject': subject,
+              'grade': grade,
+            },
+          );
         }
       },
       {
@@ -36,7 +50,15 @@ class SubjectDetailScreen extends StatelessWidget {
         "title": "Quiz",
         "icon": Icons.quiz_rounded,
         "color": Colors.orange,
-        "onTap": () {
+        "onTap": () async {
+          await quizController.loadQuiz(subject, grade);
+          Get.toNamed(
+            AppRoutes.quizDetail,
+            arguments: {
+              'subject': subject,
+              'grade': grade,
+            },
+          );
         }
       },
       {
@@ -83,7 +105,7 @@ class SubjectDetailScreen extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 1.05,
+                  childAspectRatio: 0.85,
                 ),
                 itemBuilder: (context, index) {
                   final card = featureCards[index];
@@ -101,6 +123,7 @@ class SubjectDetailScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
@@ -136,24 +159,26 @@ class SubjectDetailScreen extends StatelessWidget {
                             // ✅ Thanh tiến trình chỉ cho "Lý thuyết"
                             if (card["title"] == "Lý thuyết") ...[
                               const SizedBox(height: 12),
-                              // Obx(() {
-                              //   double progress = theoryController.getProgress(subject, grade);
-                              //   return Column(
-                              //     children: [
-                              //       LinearProgressIndicator(
-                              //         value: progress,
-                              //         minHeight: 8,
-                              //         backgroundColor: card["color"].withOpacity(0.2),
-                              //         color: card["color"],
-                              //       ),
-                              //       const SizedBox(height: 4),
-                              //       Text(
-                              //         "${(progress * 100).toStringAsFixed(0)}% Hoàn thành",
-                              //         style: const TextStyle(fontSize: 12),
-                              //       ),
-                              //     ],
-                              //   );
-                              // }),
+                              Obx(() {
+                                double progress = controller.getProgress(subject, grade);
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    LinearProgressIndicator(
+                                      value: progress,
+                                      minHeight: 8,
+                                      backgroundColor:
+                                      card["color"].withOpacity(0.2),
+                                      color: card["color"],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "${(progress * 100).toStringAsFixed(0)}% Hoàn thành",
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                );
+                              }),
                             ],
                           ],
                         ),

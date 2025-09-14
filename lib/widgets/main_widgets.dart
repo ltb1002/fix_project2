@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_elearning_application/controllers/auth_controller.dart';
 import 'package:get/get.dart';
 import '../controllers/main_controller.dart';
+import '../screens/dashboard_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/profile_screen.dart';
 
@@ -13,11 +14,13 @@ class MainScreen extends StatelessWidget {
 
   final List<Widget> screens = [
     HomeScreen(),
+    DashBoardScreen(),
     ProfileScreen(),
   ];
 
   final List<String> titles = [
     "Trang chủ",
+    "Thống kê"
     "Thông tin cá nhân",
   ];
 
@@ -67,6 +70,11 @@ class MainScreen extends StatelessWidget {
                   icon: Icons.home,
                   label: "Home",
                   isSelected: mainController.currentIndex.value == 0,
+                ),
+                _buildAnimatedItem(
+                  icon: Icons.dashboard,
+                  label: "DashBoard",
+                  isSelected: mainController.currentIndex.value == 1,
                 ),
                 _buildAnimatedItem(
                   icon: Icons.person,

@@ -8,18 +8,18 @@ class HomeScreen extends StatelessWidget {
 
   HomeScreen({super.key});
 
-  final Map<String, IconData> subjectIcons = {
-    'Toán': Icons.calculate,
-    'Lý': Icons.science,
-    'Văn': Icons.menu_book,
-    'Anh': Icons.language,
+  final Map<String, dynamic> subjectIcons = {
+    'Toán': 'assets/icon/toan.png', // đường dẫn image
+    'Khoa Học Tự Nhiên': 'assets/icon/khoahoctunhien.png',
+    'Ngữ Văn': 'assets/icon/nguvan.png',
+    'Tiếng Anh': 'assets/icon/tienganh.png',
   };
 
   final Map<String, Color> subjectColors = {
     'Toán': Colors.blue,
-    'Lý': Colors.green,
-    'Văn': Colors.orange,
-    'Anh': Colors.purple,
+    'Khoa Học Tự Nhiên': Colors.green,
+    'Ngữ Văn': Colors.orange,
+    'Tiếng Anh': Colors.purple,
   };
 
   void _showClassSelector() {
@@ -119,7 +119,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ========== Thanh tìm kiếm ==========
+                // ===== Thanh tìm kiếm =====
                 Container(
                   padding:
                   const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -145,7 +145,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // ========== Tiêu đề ==========
+                // ===== Tiêu đề =====
                 Text(
                   "Xin chào, ${authController.username.value} 👋",
                   style: const TextStyle(
@@ -161,7 +161,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // ========== Dashboard Card ==========
+                // ===== Dashboard Card =====
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -184,7 +184,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // ========== Danh sách môn học ==========
+                // ===== Danh sách môn học =====
                 if (authController.isClassSelected.value) ...[
                   Text(
                     "Lớp ${authController.selectedClass.value}",
@@ -195,22 +195,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: authController.subjects.length,
-                    gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 14,
-                      crossAxisSpacing: 14,
-                      childAspectRatio: 2.2,
-                    ),
-                    itemBuilder: (context, index) {
-                      final subject = authController.subjects[index];
-                      return _buildSubjectCard(subject);
-                    },
-                  ),
+                  _buildSubjectsGrid(), // GridView responsive
                 ],
               ],
             ),
@@ -274,46 +259,101 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // ===== Card môn học =====
+  // ===== GridView môn học responsive =====
+  Widget _buildSubjectsGrid() {
+    int crossAxisCount = 2; // 2 cột
+    double spacing = 14;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double itemWidth =
+            (constraints.maxWidth - (crossAxisCount - 1) * spacing) /
+                crossAxisCount;
+        double itemHeight = itemWidth * 1.0; // tỷ lệ vuông
+        double childAspectRatio = itemWidth / itemHeight;
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: authController.subjects.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: spacing,
+            crossAxisSpacing: spacing,
+            childAspectRatio: childAspectRatio,
+          ),
+          itemBuilder: (context, index) {
+            final subject = authController.subjects[index];
+            return _buildSubjectCard(subject);
+          },
+        );
+      },
+    );
+  }
+
+  // ===== Card môn học responsive =====
+  // ===== Card môn học responsive (IconData hoặc Image từ assets) =====
   Widget _buildSubjectCard(String subject) {
     return GestureDetector(
       onTap: () {
         final grade = int.tryParse(authController.selectedClass.value) ?? 0;
         Get.to(() => SubjectDetailScreen(grade: grade, subject: subject));
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-        decoration: BoxDecoration(
-          color: subjectColors[subject]!.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: subjectColors[subject]!.withOpacity(0.4)),
-          boxShadow: [
-            BoxShadow(
-              color: subjectColors[subject]!.withOpacity(0.25),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double iconSize = constraints.maxHeight * 0.4; // icon ~40% chiều cao card
+          double fontSize = constraints.maxHeight * 0.15; // text ~15% chiều cao
+          fontSize = fontSize.clamp(12, 18); // giới hạn font size
+
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+            decoration: BoxDecoration(
+              color: subjectColors[subject]!.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: subjectColors[subject]!.withOpacity(0.4)),
+              boxShadow: [
+                BoxShadow(
+                  color: subjectColors[subject]!.withOpacity(0.25),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(subjectIcons[subject],
-                color: subjectColors[subject], size: 30),
-            const SizedBox(width: 8),
-            Text(
-              subject,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: subjectColors[subject],
-                fontSize: 20,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Kiểm tra kiểu: IconData hay Image path
+                subjectIcons[subject] is IconData
+                    ? Icon(
+                  subjectIcons[subject],
+                  color: subjectColors[subject],
+                  size: iconSize,
+                )
+                    : Image.asset(
+                  subjectIcons[subject],
+                  width: iconSize,
+                  height: iconSize,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  subject,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: subjectColors[subject],
+                    fontSize: fontSize,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
-
 }

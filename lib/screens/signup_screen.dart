@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../controllers/auth_controller.dart';
 
 class SignupScreen extends StatelessWidget {
   final GlobalKey<FormState> _formkeySignup = GlobalKey<FormState>();
   final AuthController authController = Get.find<AuthController>();
+
+  SignupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +33,11 @@ class SignupScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Tiêu đề
-                      Column(
+                      const Column(
                         children: [
                           Text(
                             "Đăng Ký",
@@ -48,19 +48,17 @@ class SignupScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 30),
-
-                      // Ô nhập Email
+                      const SizedBox(height: 30),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: TextFormField(
                           controller: authController.emailController,
                           keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: "Email",
                             prefixIcon: Icon(Icons.email),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
                             ),
                           ),
                           validator: (value) {
@@ -68,18 +66,16 @@ class SignupScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                      SizedBox(height: 20),
-
-                      // Ô nhập Username
+                      const SizedBox(height: 20),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: TextFormField(
                           controller: authController.usernameController,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: "Username",
                             prefixIcon: Icon(Icons.person),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
                             ),
                           ),
                           validator: (value) {
@@ -87,17 +83,15 @@ class SignupScreen extends StatelessWidget {
                           },
                         ),
                       ),
-                      SizedBox(height: 20),
-
-                      // Ô nhập Password
+                      const SizedBox(height: 20),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: Obx(() => TextFormField(
                           controller: authController.passwordController,
                           obscureText: authController.isPasswordVisible.value,
                           decoration: InputDecoration(
                             labelText: "Password",
-                            prefixIcon: Icon(Icons.lock),
+                            prefixIcon: const Icon(Icons.lock),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -118,13 +112,11 @@ class SignupScreen extends StatelessWidget {
                           },
                         )),
                       ),
-                      SizedBox(height: 30),
-
-                      // Nút Đăng ký
+                      const SizedBox(height: 30),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: Container(
-                          padding: EdgeInsets.only(top: 3, left: 3),
+                          padding: const EdgeInsets.only(top: 3, left: 3),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50),
                             border: Border.all(color: Colors.black),
@@ -140,7 +132,7 @@ class SignupScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50),
                             ),
-                            child: Text(
+                            child: const Text(
                               "Đăng ký",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
@@ -151,18 +143,19 @@ class SignupScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-
-                      // Điều hướng sang trang Đăng nhập
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text("Bạn đã có tài khoản? "),
+                          const Text("Bạn đã có tài khoản? "),
                           GestureDetector(
                             onTap: () {
-                              Get.back();
+                              authController.usernameController.clear();
+                              authController.emailController.clear();
+                              authController.passwordController.clear();
+                              Get.toNamed('/login');
                             },
-                            child: Text(
+                            child: const Text(
                               "Đăng Nhập",
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
@@ -173,12 +166,10 @@ class SignupScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 30),
-
-                      // Ảnh minh họa
+                      const SizedBox(height: 30),
                       Container(
                         height: 200,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage("assets/img_4.png"),
                             fit: BoxFit.fitHeight,

@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
 import 'package:flutter_elearning_application/app/routes/app_routes.dart';
-import 'package:flutter_elearning_application/screens/home_screen.dart';
 import 'package:flutter_elearning_application/screens/login_screen.dart';
 import 'package:flutter_elearning_application/screens/signup_screen.dart';
 import 'package:flutter_elearning_application/screens/welcome_screen.dart';
 
+import '../../screens/lesson_detail_screen.dart';
 import '../../screens/subject_detail_screen.dart';
+import '../../screens/theory_screen.dart';
 import '../../widgets/main_widgets.dart';
 
 class AppPages {
@@ -21,6 +22,27 @@ class AppPages {
         subject: Get.arguments['subject'],
       ),
       transition: Transition.rightToLeftWithFade,
+    ),
+
+    GetPage(
+      name: AppRoutes.theory,
+      page: () {
+        final args = Get.arguments ?? {};
+        return TheoryScreen(
+          subject: args['subject'] ?? 'Toán',
+          grade: args['grade'] ?? 6,
+        );
+      },
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.lessonDetail,
+      page: () {
+        final args = Get.arguments ?? {};
+        final lesson = args['lesson'];
+        return LessonDetailScreen(lesson: lesson);
+      },
+      transition: Transition.cupertino,
     ),
   ];
 }

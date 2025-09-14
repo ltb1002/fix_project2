@@ -36,6 +36,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   get: ^4.7.2
   shared_preferences: ^2.5.3
+  chewie: ^1.12.1
+  video_player: ^2.10.0
+  fraction: ^5.0.5
+  flutter_math_fork: ^0.7.4
+  http: ^1.5.0
+  connectivity_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -60,6 +66,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/icon/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
