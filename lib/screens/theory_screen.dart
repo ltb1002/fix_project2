@@ -6,10 +6,12 @@ import '../controllers/theory_controller.dart';
 class TheoryScreen extends StatelessWidget {
   final String subject;
   final int grade;
+  final String mode; // Thêm biến mode để xác định flow
   final Color primaryGreen = const Color(0xFF4CAF50);
 
   TheoryScreen({Key? key, required this.subject, required this.grade})
-      : super(key: key);
+      : mode = Get.arguments?['mode'] ?? 'theory', // Lấy mode từ arguments
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,9 @@ class TheoryScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Lý thuyết $subject - Khối $grade"),
+        title: Text(mode == 'theory'
+            ? "Lý thuyết $subject - Khối $grade"
+            : "Giải bài tập $subject - Khối $grade"),
         backgroundColor: primaryGreen,
       ),
       body: Obx(() {
@@ -74,10 +78,19 @@ class TheoryScreen extends StatelessWidget {
                       color: isDone ? Colors.green : Colors.grey,
                     ),
                     onTap: () {
-                      Get.toNamed(
-                        AppRoutes.lessonDetail,
-                        arguments: {'lesson': lesson},
-                      );
+                      if (mode == 'theory') {
+                        // Flow lý thuyết: đi đến trang chi tiết bài học
+                        Get.toNamed(
+                          AppRoutes.lessonDetail,
+                          arguments: {'lesson': lesson},
+                        );
+                      } else {
+                        // Flow giải bài tập: đi đến trang giải bài tập
+                        Get.toNamed(
+                          AppRoutes.solveExercisesDetail,
+                          arguments: {'lesson': lesson},
+                        );
+                      }
                     },
                   );
                 }),

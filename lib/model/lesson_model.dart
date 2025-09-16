@@ -1,3 +1,5 @@
+import 'exercise_model.dart';
+
 class ContentItem {
   final int id;
   final String type;       // "text" hoặc "image"
@@ -26,12 +28,14 @@ class Lesson {
   final String title;
   final String videoUrl;
   final List<ContentItem> contents;
+  final List<Exercise> exercises;
 
   Lesson({
     required this.id,
     required this.title,
     required this.videoUrl,
     this.contents = const [],
+    this.exercises = const [],
   });
 
   Lesson copyWith({
@@ -39,21 +43,36 @@ class Lesson {
     String? title,
     String? videoUrl,
     List<ContentItem>? contents,
+    List<Exercise>? exercises,
   }) {
     return Lesson(
       id: id ?? this.id,
       title: title ?? this.title,
       videoUrl: videoUrl ?? this.videoUrl,
       contents: contents ?? this.contents,
+      exercises: exercises ?? this.exercises,
     );
   }
 
   factory Lesson.fromJson(Map<String, dynamic> json) {
+    // Load contents nếu có
+    final contentsData = json['contents'] as List<dynamic>? ?? [];
+    List<ContentItem> contents = contentsData
+        .map((c) => ContentItem.fromJson(c))
+        .toList();
+
+    // Load exercises nếu có
+    final exercisesData = json['exercises'] as List<dynamic>? ?? [];
+    List<Exercise> exercises = exercisesData
+        .map((e) => Exercise.fromJson(e))
+        .toList();
+
     return Lesson(
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
-      videoUrl: json['videoUrl'] ?? "",
-      contents: [], // sẽ được load từ API riêng
+      videoUrl: json['videoUrl'] ?? '',
+      contents: contents,
+      exercises: exercises,
     );
   }
 }

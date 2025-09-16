@@ -36,6 +36,7 @@ class SubjectDetailScreen extends StatelessWidget {
             arguments: {
               'subject': subject,
               'grade': grade,
+              'mode': 'theory', // Thêm mode để phân biệt
             },
           );
         }
@@ -45,7 +46,14 @@ class SubjectDetailScreen extends StatelessWidget {
         "icon": Icons.edit_document,
         "color": Colors.green,
         "onTap": () {
-          // TODO: Mở trang giải bài tập sau
+          Get.toNamed(
+            AppRoutes.theory,
+            arguments: {
+              'subject': subject,
+              'grade': grade,
+              'mode': 'exercise', // Thêm mode để phân biệt
+            },
+          );
         }
       },
       {

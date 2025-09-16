@@ -171,7 +171,7 @@ class SignupScreen extends StatelessWidget {
                         height: 200,
                         decoration: const BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage("assets/img_4.png"),
+                            image: AssetImage("assets/images/mg_4.png"),
                             fit: BoxFit.fitHeight,
                           ),
                         ),

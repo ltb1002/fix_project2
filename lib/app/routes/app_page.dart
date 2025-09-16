@@ -7,6 +7,7 @@ import 'package:flutter_elearning_application/screens/welcome_screen.dart';
 import '../../screens/lesson_detail_screen.dart';
 import '../../screens/practice_exam_detail_screen.dart';
 import '../../screens/practice_exam_screen.dart';
+import '../../screens/solve_exercises_detail.dart';
 import '../../screens/subject_detail_screen.dart';
 import '../../screens/theory_screen.dart';
 import '../../widgets/main_widgets.dart';
@@ -65,6 +66,15 @@ class AppPages {
         return PracticeExamDetailScreen(
           fileName: args['fileName'],
         );
+      },
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: AppRoutes.solveExercisesDetail,
+      page: () {
+        final args = Get.arguments ?? {};
+        final lesson = args['lesson'];
+        return SolveExercisesDetailScreen(lesson: lesson);
       },
       transition: Transition.cupertino,
     ),

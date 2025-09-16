@@ -5,13 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 import '../model/chapter_model.dart';
+import '../model/exercise_model.dart';
 import '../model/lesson_model.dart';
 
-class TheoryRepository {
+class SubjectRepository {
   late final String baseUrl;
   late final http.Client client;
 
-  TheoryRepository() {
+  SubjectRepository() {
     if (kIsWeb) {
       baseUrl = "http://192.168.0.144:8080/api";
     } else if (Platform.isAndroid) {
@@ -71,42 +72,66 @@ class TheoryRepository {
     try {
       final subjectCode = _normalizeSubjectCode(subjectName);
 
-      final subjectRes =
-      await _getWithRetry("$baseUrl/grades/$grade/subjects/$subjectCode");
-      final subject = json.decode(subjectRes);
+      // 1️⃣ Lấy subject theo grade + code
+      final subjectRes = await _getWithRetry("$baseUrl/grades/$grade/subjects/$subjectCode");
+      final subjectData = json.decode(subjectRes);
 
-      if (subject == null || subject['id'] == null) {
+      if (subjectData == null || subjectData['id'] == null) {
         throw Exception("Không tìm thấy môn học: $subjectName - Khối $grade");
       }
 
-      final subjectId = subject['id'];
+      final subjectId = subjectData['id'];
 
-      final chaptersRes =
-      await _getWithRetry("$baseUrl/subjects/$subjectId/chapters");
-      final chaptersData = json.decode(chaptersRes) as List;
+      // 2️⃣ Lấy danh sách chapters
+      final chaptersRes = await _getWithRetry("$baseUrl/subjects/$subjectId/chapters");
+      final chaptersJson = json.decode(chaptersRes) as List;
 
       List<Chapter> chapters = [];
 
-      for (var chapterJson in chaptersData) {
+      for (var chapterJson in chaptersJson) {
         final chapterId = chapterJson['id'];
-        final lessonsRes =
-        await _getWithRetry("$baseUrl/chapters/$chapterId/lessons");
-        final lessonsData = json.decode(lessonsRes) as List;
+
+        // 3️⃣ Lấy danh sách lessons
+        final lessonsRes = await _getWithRetry("$baseUrl/chapters/$chapterId/lessons");
+        final lessonsJson = json.decode(lessonsRes) as List;
 
         List<Lesson> lessons = [];
-        for (var lessonJson in lessonsData) {
+
+        for (var lessonJson in lessonsJson) {
           Lesson lesson = Lesson.fromJson(lessonJson);
 
-          // fetch contents và sort theo order
-          final contentsRes =
-          await _getWithRetry("$baseUrl/lessons/${lesson.id}/contents");
-          final contentsData = json.decode(contentsRes) as List;
-          final contents = contentsData
+          // 4️⃣ Lấy lesson contents
+          final contentsRes = await _getWithRetry("$baseUrl/lessons/${lesson.id}/contents");
+          final contentsJson = json.decode(contentsRes) as List;
+          final contents = contentsJson
               .map<ContentItem>((x) => ContentItem.fromJson(x))
               .toList()
             ..sort((a, b) => a.order.compareTo(b.order));
 
           lesson = lesson.copyWith(contents: contents);
+
+          // 5️⃣ Lấy exercises của lesson
+          final exercisesRes = await _getWithRetry("$baseUrl/lessons/${lesson.id}/exercises");
+          final exercisesJson = json.decode(exercisesRes) as List;
+
+          List<Exercise> exercises = [];
+
+          for (var exJson in exercisesJson) {
+            Exercise exercise = Exercise.fromJson(exJson);
+
+            // 6️⃣ Lấy solutions của exercise
+            final solutionsRes = await _getWithRetry("$baseUrl/exercises/${exercise.id}/solutions");
+            final solutionsJson = json.decode(solutionsRes) as List;
+
+            final solutions = solutionsJson
+                .map<ExerciseSolution>((x) => ExerciseSolution.fromJson(x))
+                .toList();
+
+            exercise = exercise.copyWith(solutions: solutions);
+            exercises.add(exercise);
+          }
+
+          lesson = lesson.copyWith(exercises: exercises);
           lessons.add(lesson);
         }
 
