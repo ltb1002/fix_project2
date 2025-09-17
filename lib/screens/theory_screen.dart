@@ -9,9 +9,8 @@ class TheoryScreen extends StatelessWidget {
   final String mode; // Thêm biến mode để xác định flow
   final Color primaryGreen = const Color(0xFF4CAF50);
 
-  TheoryScreen({Key? key, required this.subject, required this.grade})
-      : mode = Get.arguments?['mode'] ?? 'theory', // Lấy mode từ arguments
-        super(key: key);
+  TheoryScreen({super.key, required this.subject, required this.grade})
+    : mode = Get.arguments?['mode'] ?? 'theory';
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +19,11 @@ class TheoryScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(mode == 'theory'
-            ? "Lý thuyết $subject - Khối $grade"
-            : "Giải bài tập $subject - Khối $grade"),
+        title: Text(
+          mode == 'theory'
+              ? "Lý thuyết $subject - Khối $grade"
+              : "Giải bài tập $subject - Khối $grade",
+        ),
         backgroundColor: primaryGreen,
       ),
       body: Obx(() {
@@ -45,26 +46,32 @@ class TheoryScreen extends StatelessWidget {
                   child: Text(
                     "${index + 1}",
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 title: Text(
                   chapter.title,
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 children: List.generate(chapter.lessons.length, (lessonIndex) {
                   final lesson = chapter.lessons[lessonIndex];
                   final isDone = controller.isCompleted(
-                      controller.subject,
-                      controller.grade,
-                      lesson.title
+                    controller.subject,
+                    controller.grade,
+                    lesson.title,
                   );
                   return ListTile(
                     leading: Hero(
                       tag: lesson.title,
-                      child: Icon(Icons.menu_book,
-                          color: isDone ? primaryGreen : Colors.blue),
+                      child: Icon(
+                        Icons.menu_book,
+                        color: isDone ? primaryGreen : Colors.blue,
+                      ),
                     ),
                     title: Text(
                       lesson.title,

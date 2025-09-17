@@ -7,9 +7,8 @@ class PracticeExamDetailScreen extends StatelessWidget {
   final String fileName;
   final PdfController controller;
 
-  PracticeExamDetailScreen({Key? key, required this.fileName})
-      : controller = Get.put(PdfController(fileName)),
-        super(key: key);
+  PracticeExamDetailScreen({super.key, required this.fileName})
+    : controller = Get.put(PdfController(fileName));
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +40,7 @@ class PracticeExamDetailScreen extends StatelessWidget {
         }
 
         if (controller.pdfBytes.value.isEmpty) {
-          return const Center(
-            child: Text("Không thể tải tệp PDF"),
-          );
+          return const Center(child: Text("Không thể tải tệp PDF"));
         }
 
         return SfPdfViewer.memory(

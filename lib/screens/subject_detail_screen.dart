@@ -13,12 +13,9 @@ class SubjectDetailScreen extends StatelessWidget {
   final TheoryController controller = Get.put(TheoryController());
   final QuizController quizController = Get.put(QuizController());
 
-  SubjectDetailScreen({
-    super.key,
-    int? grade,
-    String? subject,
-  })  : grade = grade ?? (Get.arguments?['grade'] ?? 6),
-        subject = subject ?? (Get.arguments?['subject'] ?? 'Toán');
+  SubjectDetailScreen({super.key, int? grade, String? subject})
+    : grade = grade ?? (Get.arguments?['grade'] ?? 6),
+      subject = subject ?? (Get.arguments?['subject'] ?? 'Toán');
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +36,7 @@ class SubjectDetailScreen extends StatelessWidget {
               'mode': 'theory', // Thêm mode để phân biệt
             },
           );
-        }
+        },
       },
       {
         "title": "Giải bài tập",
@@ -54,7 +51,7 @@ class SubjectDetailScreen extends StatelessWidget {
               'mode': 'exercise', // Thêm mode để phân biệt
             },
           );
-        }
+        },
       },
       {
         "title": "Quiz",
@@ -64,12 +61,9 @@ class SubjectDetailScreen extends StatelessWidget {
           await quizController.loadQuiz(subject, grade);
           Get.toNamed(
             AppRoutes.quizDetail,
-            arguments: {
-              'subject': subject,
-              'grade': grade,
-            },
+            arguments: {'subject': subject, 'grade': grade},
           );
-        }
+        },
       },
       {
         "title": "Bộ đề thi",
@@ -77,18 +71,21 @@ class SubjectDetailScreen extends StatelessWidget {
         "color": Colors.purple,
         "onTap": () {
           final tag = '${subject}_$grade';
-          Get.create<PracticeExamController>(() => PracticeExamController(), tag: tag);
+          Get.create<PracticeExamController>(
+            () => PracticeExamController(),
+            tag: tag,
+          );
           final controller = Get.find<PracticeExamController>(tag: tag);
 
           Get.to(
-                () => PracticeExamScreen(
+            () => PracticeExamScreen(
               subject: subject,
               grade: grade.toString(),
               controller: controller,
             ),
             transition: Transition.rightToLeft,
           );
-        }
+        },
       },
     ];
 
@@ -181,15 +178,18 @@ class SubjectDetailScreen extends StatelessWidget {
                             if (card["title"] == "Lý thuyết") ...[
                               const SizedBox(height: 12),
                               Obx(() {
-                                double progress = controller.getProgress(subject, grade);
+                                double progress = controller.getProgress(
+                                  subject,
+                                  grade,
+                                );
                                 return Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     LinearProgressIndicator(
                                       value: progress,
                                       minHeight: 8,
-                                      backgroundColor:
-                                      card["color"].withOpacity(0.2),
+                                      backgroundColor: card["color"]
+                                          .withOpacity(0.2),
                                       color: card["color"],
                                     ),
                                     const SizedBox(height: 4),

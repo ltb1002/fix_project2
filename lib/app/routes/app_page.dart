@@ -1,3 +1,5 @@
+import 'package:flutter_elearning_application/screens/forgot_password_screen.dart';
+import 'package:flutter_elearning_application/screens/reset_pass_screen.dart';
 import 'package:get/get.dart';
 import 'package:flutter_elearning_application/app/routes/app_routes.dart';
 import 'package:flutter_elearning_application/screens/login_screen.dart';
@@ -18,6 +20,11 @@ class AppPages {
     GetPage(name: AppRoutes.signup, page: () => SignupScreen()),
     GetPage(name: AppRoutes.login, page: () => LoginScreen()),
     GetPage(name: AppRoutes.main, page: () => MainScreen()),
+    GetPage(name: AppRoutes.forgotPassword, page: () => ForgotPasswordScreen()),
+    GetPage(
+      name: AppRoutes.resetPassword,
+      page: () => ResetPasswordScreen(),
+    ),
     GetPage(
       name: AppRoutes.subjectDetail,
       page: () => SubjectDetailScreen(
@@ -63,9 +70,7 @@ class AppPages {
       name: AppRoutes.practiceExamDetail,
       page: () {
         final args = Get.arguments ?? {};
-        return PracticeExamDetailScreen(
-          fileName: args['fileName'],
-        );
+        return PracticeExamDetailScreen(fileName: args['fileName']);
       },
       transition: Transition.cupertino,
     ),

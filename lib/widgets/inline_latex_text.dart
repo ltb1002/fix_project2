@@ -12,13 +12,13 @@ class InlineLatexText extends StatelessWidget {
   final FontWeight fontWeight;
 
   const InlineLatexText({
-    Key? key,
+    super.key,
     required this.text,
     this.fontSize = 16,
     this.color,
     this.textAlign = TextAlign.start,
     this.fontWeight = FontWeight.normal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,44 +42,53 @@ class InlineLatexText extends StatelessWidget {
 
     for (final m in matches) {
       if (m.start > currentIndex) {
-        spans.add(TextSpan(
-          text: text.substring(currentIndex, m.start),
+        spans.add(
+          TextSpan(
+            text: text.substring(currentIndex, m.start),
+            style: TextStyle(
+              fontSize: fontSize,
+              color: color ?? Colors.black,
+              fontWeight: fontWeight,
+              height: 1.3,
+            ),
+          ),
+        );
+      }
+
+      spans.add(
+        WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Math.tex(
+              m.group(1) ?? '',
+              mathStyle: MathStyle.text,
+              textStyle: TextStyle(fontSize: fontSize),
+            ),
+          ),
+        ),
+      );
+
+      currentIndex = m.end;
+    }
+
+    if (currentIndex < text.length) {
+      spans.add(
+        TextSpan(
+          text: text.substring(currentIndex),
           style: TextStyle(
             fontSize: fontSize,
             color: color ?? Colors.black,
             fontWeight: fontWeight,
             height: 1.3,
           ),
-        ));
-      }
-
-      spans.add(WidgetSpan(
-        alignment: PlaceholderAlignment.middle,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Math.tex(
-            m.group(1) ?? '',
-            mathStyle: MathStyle.text,
-            textStyle: TextStyle(fontSize: fontSize),
-          ),
         ),
-      ));
-
-      currentIndex = m.end;
+      );
     }
 
-    if (currentIndex < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(currentIndex),
-        style: TextStyle(
-          fontSize: fontSize,
-          color: color ?? Colors.black,
-          fontWeight: fontWeight,
-          height: 1.3,
-        ),
-      ));
-    }
-
-    return RichText(textAlign: textAlign, text: TextSpan(children: spans));
+    return RichText(
+      textAlign: textAlign,
+      text: TextSpan(children: spans),
+    );
   }
 }

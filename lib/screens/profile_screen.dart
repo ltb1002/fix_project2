@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import '../controllers/auth_controller.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -16,8 +18,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Chọn ảnh từ camera
   Future<void> _pickImageFromCamera() async {
-    final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.camera);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.camera,
+    );
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -27,8 +30,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Chọn ảnh từ thư viện
   Future<void> _pickImageFromGallery() async {
-    final XFile? pickedFile =
-    await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -81,7 +85,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             radius: 50,
                             backgroundImage: _image != null
                                 ? FileImage(_image!) as ImageProvider
-                                : AssetImage("assets/images/default_avatar.png"),
+                                : AssetImage(
+                                    "assets/images/default_avatar.png",
+                                  ),
                           ),
                         ),
                         Positioned(
@@ -148,30 +154,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ListTile(
                       leading: const Icon(Icons.class_, color: Colors.purple),
                       title: const Text("Lớp học hiện tại"),
-                      subtitle: Obx(() => DropdownButton<String>(
-                        value: authController.selectedClass.value.isNotEmpty
-                            ? authController.selectedClass.value
-                            : null,
-                        hint: const Text("Chọn lớp học"),
-                        isExpanded: true,
-                        items: authController.classes
-                            .map((String value) => DropdownMenuItem<String>(
-                          value: value,
-                          child: Text("Lớp $value"),
-                        ))
-                            .toList(),
-                        onChanged: (String? newValue) {
-                          if (newValue != null) {
-                            authController.setSelectedClass(newValue);
-                            Get.snackbar(
-                              "Cập nhật lớp học",
-                              "Bạn đã chọn lớp $newValue",
-                              snackPosition: SnackPosition.BOTTOM,
-                              duration: const Duration(seconds: 2),
-                            );
-                          }
-                        },
-                      )),
+                      subtitle: Obx(
+                        () => DropdownButton<String>(
+                          value: authController.selectedClass.value.isNotEmpty
+                              ? authController.selectedClass.value
+                              : null,
+                          hint: const Text("Chọn lớp học"),
+                          isExpanded: true,
+                          items: authController.classes
+                              .map(
+                                (String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text("Lớp $value"),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              authController.setSelectedClass(newValue);
+                              Get.snackbar(
+                                "Cập nhật lớp học",
+                                "Bạn đã chọn lớp $newValue",
+                                snackPosition: SnackPosition.BOTTOM,
+                                duration: const Duration(seconds: 2),
+                              );
+                            }
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),

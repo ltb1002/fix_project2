@@ -10,11 +10,11 @@ class PracticeExamScreen extends StatefulWidget {
   final PracticeExamController controller;
 
   const PracticeExamScreen({
-    Key? key,
+    super.key,
     required this.subject,
     required this.grade,
     required this.controller,
-  }) : super(key: key);
+  });
 
   @override
   State<PracticeExamScreen> createState() => _PracticeExamScreenState();
@@ -92,7 +92,7 @@ class _PracticeExamScreenState extends State<PracticeExamScreen> {
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: () {
           Get.to(
-                () => PracticeExamDetailScreen(fileName: exam.fileName),
+            () => PracticeExamDetailScreen(fileName: exam.fileName),
             transition: Transition.rightToLeft,
           );
         },
@@ -102,9 +102,12 @@ class _PracticeExamScreenState extends State<PracticeExamScreen> {
 
   String _getExamTypeName(String examType) {
     switch (examType) {
-      case 'giuaky': return 'Giữa kỳ';
-      case 'cuoiky': return 'Cuối kỳ';
-      default: return examType;
+      case 'giuaky':
+        return 'Giữa kỳ';
+      case 'cuoiky':
+        return 'Cuối kỳ';
+      default:
+        return examType;
     }
   }
 

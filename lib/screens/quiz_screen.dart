@@ -6,7 +6,7 @@ import '../controllers/quiz_controller.dart';
 import '../widgets/inline_latex_text.dart';
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({Key? key}) : super(key: key);
+  const QuizScreen({super.key});
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -178,10 +178,10 @@ class _QuizScreenState extends State<QuizScreen> {
                     onTap: isSubmitted
                         ? null
                         : () {
-                      setState(() {
-                        selectedAnswers[currentQuestion] = index;
-                      });
-                    },
+                            setState(() {
+                              selectedAnswers[currentQuestion] = index;
+                            });
+                          },
                     child: Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(12),
@@ -197,10 +197,10 @@ class _QuizScreenState extends State<QuizScreen> {
                                 : Icons.radio_button_off,
                             color: isSubmitted
                                 ? (isCorrect
-                                ? Colors.green
-                                : selected
-                                ? Colors.red
-                                : Colors.grey)
+                                      ? Colors.green
+                                      : selected
+                                      ? Colors.red
+                                      : Colors.grey)
                                 : selected
                                 ? Colors.blue
                                 : Colors.grey,
@@ -231,10 +231,10 @@ class _QuizScreenState extends State<QuizScreen> {
                 ElevatedButton(
                   onPressed: currentQuestion > 0
                       ? () {
-                    setState(() {
-                      currentQuestion--;
-                    });
-                  }
+                          setState(() {
+                            currentQuestion--;
+                          });
+                        }
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade400,
@@ -245,10 +245,10 @@ class _QuizScreenState extends State<QuizScreen> {
                 ElevatedButton(
                   onPressed: currentQuestion < questions.length - 1
                       ? () {
-                    setState(() {
-                      currentQuestion++;
-                    });
-                  }
+                          setState(() {
+                            currentQuestion++;
+                          });
+                        }
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade400,
@@ -267,21 +267,22 @@ class _QuizScreenState extends State<QuizScreen> {
                 onPressed: isSubmitted
                     ? null
                     : () {
-                  if (selectedAnswers.length < questions.length) {
-                    Get.snackbar(
-                      "Thông báo",
-                      "Vui lòng trả lời tất cả các câu hỏi!",
-                      snackPosition: SnackPosition.TOP,
-                      backgroundColor: Colors.orange,
-                      colorText: Colors.white,
-                    );
-                    return;
-                  }
-                  _submitQuiz();
-                },
+                        if (selectedAnswers.length < questions.length) {
+                          Get.snackbar(
+                            "Thông báo",
+                            "Vui lòng trả lời tất cả các câu hỏi!",
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: Colors.orange,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+                        _submitQuiz();
+                      },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                  isSubmitted ? Colors.grey.shade400 : Colors.green.shade600,
+                  backgroundColor: isSubmitted
+                      ? Colors.grey.shade400
+                      : Colors.green.shade600,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
