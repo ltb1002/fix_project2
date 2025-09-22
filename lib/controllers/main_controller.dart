@@ -1,9 +1,9 @@
-import 'package:get/get.dart';
+  import 'package:get/get.dart';
 
-class MainController extends GetxController {
-  var currentIndex = 0.obs;
+  class MainController extends GetxController {
+    var currentIndex = 0.obs;
 
-  void changeTab(int index) {
-    currentIndex.value = index;
+    void changeTab(int index) {
+      currentIndex.value = index;
+    }
   }
-}

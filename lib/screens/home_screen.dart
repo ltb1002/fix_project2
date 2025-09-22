@@ -22,6 +22,13 @@ class HomeScreen extends StatelessWidget {
     'Tiếng Anh': Colors.purple,
   };
 
+  final Map<String, double> subjectProgress = {
+    "Toán": 0.7, // 70%
+    "Khoa Học Tự Nhiên": 0.45, // 45%
+    "Ngữ Văn": 0.3, // 30%
+    "Tiếng Anh": 0.9, // 90%
+  };
+
   void _showClassSelector() {
     Get.bottomSheet(
       Obx(() {

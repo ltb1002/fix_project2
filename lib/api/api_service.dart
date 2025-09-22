@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class APIService {
-  static const String baseUrl = "http://192.168.15.192:8080/api/auth";
+  static const String baseUrl = "http://192.168.15.192:8080/api";
 
   // Headers chung cho các request
   static Map<String, String> getHeaders({String? token}) {
@@ -27,123 +27,96 @@ class APIService {
     return {'success': false, 'message': 'Network error: ${e.toString()}'};
   }
 
-  // Đăng ký tài khoản
+  // =================== AUTH ===================
   static Future<Map<String, dynamic>> register({
     required String email,
     required String password,
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/register'),
+        Uri.parse('$baseUrl/auth/register'),
         headers: getHeaders(),
         body: json.encode({'email': email, 'password': password}),
       );
-
-      final responseData = json.decode(response.body);
-      return responseData;
+      return json.decode(response.body);
     } catch (e) {
       return handleError(e);
     }
   }
 
-  // Đăng nhập
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/login'),
+        Uri.parse('$baseUrl/auth/login'),
         headers: getHeaders(),
         body: json.encode({'email': email, 'password': password}),
       );
-
-      final responseData = json.decode(response.body);
-      return responseData;
+      return json.decode(response.body);
     } catch (e) {
       return handleError(e);
     }
   }
 
-  // Quên mật khẩu
-  static Future<Map<String, dynamic>> forgotPassword({
-    required String email,
-  }) async {
+  static Future<Map<String, dynamic>> forgotPassword({required String email}) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/forgot-password'),
+        Uri.parse('$baseUrl/auth/forgot-password'),
         headers: getHeaders(),
         body: json.encode({'email': email}),
       );
-
-      final responseData = json.decode(response.body);
-      return responseData;
+      return json.decode(response.body);
     } catch (e) {
       return handleError(e);
     }
   }
 
-  // Reset mật khẩu
   static Future<Map<String, dynamic>> resetPassword({
     required String token,
     required String newPassword,
   }) async {
     try {
-      print('Gửi yêu cầu reset password: token=$token, newPassword=$newPassword');
-
       final response = await http.post(
-        Uri.parse('$baseUrl/reset-password'),
+        Uri.parse('$baseUrl/auth/reset-password'),
         headers: getHeaders(),
         body: json.encode({'token': token, 'newPassword': newPassword}),
       );
-
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       return json.decode(response.body);
-    } catch (e) {
-      print('Lỗi reset password: $e');
-      return {'success': false, 'message': 'Lỗi hệ thống'};
-    }
-  }
-
-  // Lấy thông tin user
-  static Future<Map<String, dynamic>> getUserProfile({
-    required String token,
-  }) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/user-profile'),
-        headers: getHeaders(token: token),
-      );
-
-      final responseData = json.decode(response.body);
-      return responseData;
     } catch (e) {
       return handleError(e);
     }
   }
 
-  // Cập nhật thông tin user
+  static Future<Map<String, dynamic>> getUserProfile({required String token}) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/user-profile'),
+        headers: getHeaders(token: token),
+      );
+      return json.decode(response.body);
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
   static Future<Map<String, dynamic>> updateUserProfile({
     required String token,
     required Map<String, dynamic> userData,
   }) async {
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/user-profile'),
+        Uri.parse('$baseUrl/auth/user-profile'),
         headers: getHeaders(token: token),
         body: json.encode(userData),
       );
-
-      final responseData = json.decode(response.body);
-      return responseData;
+      return json.decode(response.body);
     } catch (e) {
       return handleError(e);
     }
   }
 
-  // Đổi mật khẩu
   static Future<Map<String, dynamic>> changePassword({
     required String token,
     required String currentPassword,
@@ -151,33 +124,152 @@ class APIService {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/change-password'),
+        Uri.parse('$baseUrl/auth/change-password'),
         headers: getHeaders(token: token),
         body: json.encode({
           'currentPassword': currentPassword,
           'newPassword': newPassword,
         }),
       );
-
-      final responseData = json.decode(response.body);
-      return responseData;
+      return json.decode(response.body);
     } catch (e) {
       return handleError(e);
     }
   }
 
-  // Kiểm tra token validity
-  static Future<Map<String, dynamic>> validateToken({
-    required String token,
+  static Future<Map<String, dynamic>> validateToken({required String token}) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/validate-token'),
+        headers: getHeaders(token: token),
+      );
+      return json.decode(response.body);
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  // =================== PROGRESS ===================
+  static Future<Map<String, dynamic>> getProgress({required int userId, required int grade}) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/progress/user/$userId/grade/$grade"),
+        headers: getHeaders(),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> updateProgressApi(Map<String,dynamic> body) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/progress/update"),
+        headers: getHeaders(),
+        body: json.encode(body),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> getProgressHistory({
+    required int userId,
+    required String subject,
+    required String range
   }) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/validate-token'),
-        headers: getHeaders(token: token),
+        Uri.parse("$baseUrl/progress/history?userId=$userId&subject=$subject&range=$range"),
+        headers: getHeaders(),
       );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
 
-      final responseData = json.decode(response.body);
-      return responseData;
+  // =================== SUBJECTS & CONTENT ===================
+  static Future<Map<String,dynamic>> getSubjects({int? grade}) async {
+    try {
+      String url = "$baseUrl/subjects";
+      if (grade != null) url += "?grade=$grade";
+      final response = await http.get(Uri.parse(url), headers: getHeaders());
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> getSubjectByGradeAndCode(int grade, String code) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/grades/$grade/subjects/$code"),
+        headers: getHeaders(),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> getChapters(int subjectId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/subjects/$subjectId/chapters"),
+        headers: getHeaders(),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> getLessons(int chapterId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/chapters/$chapterId/lessons"),
+        headers: getHeaders(),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> getLessonContents(int lessonId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/lessons/$lessonId/contents"),
+        headers: getHeaders(),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> getExercises(int lessonId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/lessons/$lessonId/exercises"),
+        headers: getHeaders(),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
+    } catch (e) {
+      return handleError(e);
+    }
+  }
+
+  static Future<Map<String,dynamic>> getExerciseSolutions(int exerciseId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/exercises/$exerciseId/solutions"),
+        headers: getHeaders(),
+      );
+      return {'success': response.statusCode == 200, 'data': json.decode(response.body)};
     } catch (e) {
       return handleError(e);
     }

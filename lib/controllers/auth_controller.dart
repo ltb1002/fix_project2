@@ -336,4 +336,5 @@ class AuthController extends GetxController {
     confirmPasswordController.dispose();
     super.onClose();
   }
+
 }
